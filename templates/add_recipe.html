@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a Recipe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bebas Neue', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fdf063;
+            color: #0c2f15;
+            line-height: 1.6;
+            font-size: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2, h3, .section-title {
+            color: #0c2f15;
+            font-weight: 800;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #0c2f15;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            letter-spacing: 2px;
+        }
+
+        h1::before {
+            content: "👨‍🍳";
+            font-size: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 800;
+            color: #0c2f15;
+            font-size: 1.2rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #0c2f15;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: inherit;
+            background: #fff8c5;
+            color: #0c2f15;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #f05d23;
+            box-shadow: 0 0 0 3px rgba(240, 93, 35, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .required {
+            color: #d42219;
+        }
+
+        .ingredients-section {
+            margin-top: 32px;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #0c2f15;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f05d23;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1.5px;
+        }
+
+        .section-title::before {
+            content: "🥘";
+            font-size: 20px;
+        }
+
+        .ingredient-item {
+            background: #fff8c5;
+            border: 3px solid #0c2f15;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ingredient-item:hover {
+            border-color: #f05d23;
+            box-shadow: 0 4px 12px rgba(240, 93, 35, 0.1);
+        }
+
+        .ingredient-item.active {
+            border-color: #f05d23;
+            background-color: #fff8c5;
+        }
+
+        .ingredient-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .ingredient-number {
+            background-color: #f05d23;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .ingredient-number.filled {
+            background-color: #d34710;
+        }
+
+        .remove-ingredient {
+            background: #d42219;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-ingredient:hover {
+            background-color: #b71c1c;
+        }
+
+        .ingredient-fields {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .add-ingredient-btn {
+            background: #f05d23;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .add-ingredient-btn:hover {
+            background-color: #d34710;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 34, 25, 0.18);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #f05d23;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #d34710;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 34, 25, 0.18);
+        }
+
+        .btn-secondary {
+            background-color: #0c2f15;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #333;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            color: #f05d23;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .back-link:hover {
+            color: #d34710;
+        }
+
+        .back-link::before {
+            content: "← ";
+            margin-right: 5px;
+        }
+
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 20px;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 20px 10px;
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .ingredient-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation for new ingredients */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ingredient-item.new {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add a New Recipe</h1>
+
+        <div id="successMessage" class="success-message">
+            Recipe added successfully! 🎉
+        </div>
+
+        <form id="recipeForm" method="POST" action="/add_recipe" novalidate>
+            <div class="form-group">
+                <label for="name">Recipe Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required 
+                       placeholder="e.g., Chicken Parmesan, Chocolate Chip Cookies">
+            </div>
+
+            <div class="form-group">
+                <label for="instructions">Instructions <span class="required">*</span></label>
+                <textarea id="instructions" name="instructions" required 
+                          placeholder="Describe step-by-step how to prepare this recipe..."></textarea>
+                <div class="hint">Be as detailed as possible to help others recreate your recipe!</div>
+            </div>
+
+            <div class="ingredients-section">
+                <h2 class="section-title">Recipe Ingredients</h2>
+                
+                <div id="ingredientsList">
+                    {% for i in range(3) %}
+                    <div class="ingredient-item" data-index="{{ i }}">
+                        <div class="ingredient-header">
+                            <div class="ingredient-number">{{ i+1 }}</div>
+                            {% if i > 0 %}
+                            <button type="button" class="remove-ingredient" onclick="removeIngredient({ i })">
+                                ✕ Remove
+                            </button>
+                            {% endif %}
+                        </div>
+                        <div class="ingredient-fields">
+                            <div class="form-group">
+                                <label for="ingredient_name_{{ i }}">Ingredient Name</label>
+                                <input type="text" id="ingredient_name_{{ i }}" name="ingredient_name_{{ i }}" 
+                                       placeholder="e.g., Chicken breast, Tomatoes">
+                            </div>
+                            <div class="form-group">
+                                <label for="ingredient_quantity_{{ i }}">Quantity</label>
+                                <input type="number" id="ingredient_quantity_{{ i }}" name="ingredient_quantity_{{ i }}" 
+                                       step="0.01" min="0" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="ingredient_unit_{{ i }}">Unit</label>
+                                <select id="ingredient_unit_{{ i }}" name="ingredient_unit_{{ i }}">
+                                    <option value="">Select unit</option>
+                                    <optgroup label="Weight">
+                                        <option value="g">g (grams)</option>
+                                        <option value="kg">kg (kilograms)</option>
+                                        <option value="oz">oz (ounces)</option>
+                                        <option value="lb">lb (pounds)</option>
+                                    </optgroup>
+                                    <optgroup label="Volume">
+                                        <option value="ml">ml (milliliters)</option>
+                                        <option value="l">l (liters)</option>
+                                        <option value="tsp">tsp (teaspoon)</option>
+                                        <option value="tbsp">tbsp (tablespoon)</option>
+                                        <option value="cup">cup</option>
+                                        <option value="fl oz">fl oz (fluid ounces)</option>
+                                    </optgroup>
+                                    <optgroup label="Count">
+                                        <option value="pcs">pcs (pieces)</option>
+                                        <option value="each">each</option>
+                                        <option value="dozen">dozen</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button type="button" class="add-ingredient-btn" onclick="addIngredient()">
+                    ➕ Add Another Ingredient
+                </button>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-primary">🍳 Add Recipe</button>
+                <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+            </div>
+        </form>
+
+        <a href="/" class="back-link">Back to Fridge</a>
+    </div>
+
+    <script>
+        let ingredientCount = 3;
+        const maxIngredients = 20;
+
+        function addIngredient() {
+            if (ingredientCount >= maxIngredients) {
+                alert('Maximum 20 ingredients allowed');
+                return;
+            }
+
+            const ingredientsList = document.getElementById('ingredientsList');
+            const newIngredient = document.createElement('div');
+            newIngredient.className = 'ingredient-item new';
+            newIngredient.setAttribute('data-index', ingredientCount);
+            
+            newIngredient.innerHTML = `
+                <div class="ingredient-header">
+                    <div class="ingredient-number">${ingredientCount + 1}</div>
+                    <button type="button" class="remove-ingredient" onclick="removeIngredient(${ingredientCount})">
+                        ✕ Remove
+                    </button>
+                </div>
+                <div class="ingredient-fields">
+                    <div class="form-group">
+                        <label for="ingredient_name_${ingredientCount}">Ingredient Name</label>
+                        <input type="text" id="ingredient_name_${ingredientCount}" name="ingredient_name_${ingredientCount}" 
+                               placeholder="e.g., Chicken breast, Tomatoes">
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredient_quantity_${ingredientCount}">Quantity</label>
+                        <input type="number" id="ingredient_quantity_${ingredientCount}" name="ingredient_quantity_${ingredientCount}" 
+                               step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredient_unit_${ingredientCount}">Unit</label>
+                        <select id="ingredient_unit_${ingredientCount}" name="ingredient_unit_${ingredientCount}">
+                            <option value="">Select unit</option>
+                            <optgroup label="Weight">
+                                <option value="g">g (grams)</option>
+                                <option value="kg">kg (kilograms)</option>
+                                <option value="oz">oz (ounces)</option>
+                                <option value="lb">lb (pounds)</option>
+                            </optgroup>
+                            <optgroup label="Volume">
+                                <option value="ml">ml (milliliters)</option>
+                                <option value="l">l (liters)</option>
+                                <option value="tsp">tsp (teaspoon)</option>
+                                <option value="tbsp">tbsp (tablespoon)</option>
+                                <option value="cup">cup</option>
+                                <option value="fl oz">fl oz (fluid ounces)</option>
+                            </optgroup>
+                            <optgroup label="Count">
+                                <option value="pcs">pcs (pieces)</option>
+                                <option value="each">each</option>
+                                <option value="dozen">dozen</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            ingredientsList.appendChild(newIngredient);
+            ingredientCount++;
+            
+            // Focus on the new ingredient name field
+            document.getElementById(`ingredient_name_${ingredientCount - 1}`).focus();
+        }
+
+        function removeIngredient(index) {
+            const ingredient = document.querySelector(`[data-index="${index}"]`);
+            if (ingredient) {
+                ingredient.remove();
+                updateIngredientNumbers();
+            }
+        }
+
+        function updateIngredientNumbers() {
+            const ingredients = document.querySelectorAll('.ingredient-item');
+            ingredients.forEach((ingredient, index) => {
+                const numberElement = ingredient.querySelector('.ingredient-number');
+                numberElement.textContent = index + 1;
+                ingredient.setAttribute('data-index', index);
+            });
+            ingredientCount = ingredients.length;
+        }
+
+        // Track ingredient completion
+        function updateIngredientStatus() {
+            const ingredients = document.querySelectorAll('.ingredient-item');
+            ingredients.forEach(ingredient => {
+                const nameInput = ingredient.querySelector('input[name*="ingredient_name"]');
+                const quantityInput = ingredient.querySelector('input[name*="ingredient_quantity"]');
+                const unitInput = ingredient.querySelector('select[name*="ingredient_unit"]');
+                const numberElement = ingredient.querySelector('.ingredient-number');
+                
+                if (nameInput && nameInput.value && quantityInput && quantityInput.value && unitInput && unitInput.value) {
+                    ingredient.classList.add('active');
+                    numberElement.classList.add('filled');
+                } else {
+                    ingredient.classList.remove('active');
+                    numberElement.classList.remove('filled');
+                }
+            });
+        }
+
+        // Add event listeners to track ingredient completion
+        document.addEventListener('input', updateIngredientStatus);
+        document.addEventListener('change', updateIngredientStatus);
+
+        // // Form submission handling
+        // document.getElementById('recipeForm').addEventListener('submit', function(e) {
+        //     // For demo purposes, prevent actual submission and show success message
+        //     // Remove this block in production
+        //     e.preventDefault();
+        //     showSuccessMessage();
+        // });
+
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            document.getElementById('recipeForm').reset();
+            updateIngredientStatus();
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function resetForm() {
+            document.getElementById('recipeForm').reset();
+            // Reset to initial 3 ingredients
+            const ingredientsList = document.getElementById('ingredientsList');
+            const ingredients = ingredientsList.querySelectorAll('.ingredient-item');
+            ingredients.forEach((ingredient, index) => {
+                if (index > 2) {
+                    ingredient.remove();
+                }
+            });
+            ingredientCount = 3;
+            updateIngredientStatus();
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Initialize
+        updateIngredientStatus();
+    </script>
+</body>
+</html>

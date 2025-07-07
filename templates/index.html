@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fridge Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fdf063;
+            color: #0c2f15;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3, .ingredient-name {
+            color: #0c2f15;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        h1::before {
+            content: "🥘";
+            font-size: 36px;
+        }
+
+        .ingredients-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ingredient-card {
+            background: #fff8c5;
+            border: 3px solid #0c2f15;
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ingredient-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .ingredient-quantity {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .ingredient-expiry {
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .expiry-soon {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .expiry-expired {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .expiry-good {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 8px;
+            color: #95a5a6;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn, .btn-primary, .btn-secondary, .btn-tertiary {
+            font-size: 1.2rem;
+            padding: 14px 24px;
+        }
+
+        .btn-primary {
+            background-color: #f05d23;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #d34710;
+        }
+
+        .btn-secondary {
+            background-color: #fffde7;
+            color: #FFD600;
+            border: 1.5px solid #FFD600;
+        }
+
+        .btn-secondary:hover {
+            background-color: #FFD600;
+            color: #222;
+        }
+
+        .btn-tertiary {
+            background-color: #ffe082;
+            color: #333;
+        }
+
+        .btn-tertiary:hover {
+            background-color: #FFD600;
+            color: #222;
+        }
+
+        .ingredient-count {
+            background-color: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .unit-badge {
+            background: #FFF9C4 !important;
+            color: #FFD600 !important;
+            border: 1px solid #FFD600;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 20px 10px;
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .ingredients-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        /* Animation for new items */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ingredient-card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .highlight-burst {
+            background-color: #f05d23;
+            color: white;
+            padding: 10px 16px;
+            font-weight: bold;
+            border-radius: 50%;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        footer, .footer-section {
+            background-color: #0c2f15;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fridge Inventory</h1>
+
+        <div class="ingredients-section">
+            {% if ingredients %}
+                <h2 class="section-title">
+                    Your Ingredients
+                    <span class="ingredient-count">{{ ingredients|length }}</span>
+                </h2>
+                
+                <!-- Search bar -->
+                <input type="text" id="ingredient-search" placeholder="Search ingredients..." style="width:100%;padding:10px 14px;margin-bottom:18px;font-size:16px;border-radius:6px;border:1.5px solid #e1e8ed;">
+                
+                <div class="ingredients-grid" id="ingredients-grid">
+                    {% for item in ingredients %}
+                        <div class="ingredient-card" style="position:relative;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div>
+                                    <div class="ingredient-name">{{ item.name }}</div>
+                                    <div class="ingredient-quantity">
+                                        <span class="unit-badge" style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:13px;font-weight:600;border:1px solid #FFD600;">{{ item.unit }}</span>
+                                        <strong id="quantity-display-{{ item.id }}">{{ item.quantity }}</strong>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" style="font-size: 18px; padding: 6px 10px; border-radius: 50%; min-width: 36px; min-height: 36px; display: flex; align-items: center; justify-content: center;" title="Edit Quantity" onclick="toggleEdit({{ item.id }})">✏️</button>
+                            </div>
+
+                            {% if item.expiry_date %}
+                                <div class="ingredient-expiry expiry-good" data-expiry="{{ item.expiry_date }}">
+                                    📅 Expires: {{ item.expiry_date }}
+                                </div>
+                            {% endif %}
+
+                            <!-- Edit form (initially hidden) -->
+                            <form class="edit-form" id="edit-form-{{ item.id }}" style="display:none;margin-top:10px;" method="POST" action="/update_quantity/{{ item.id }}">
+                                <input type="number" name="quantity" step="any" value="{{ item.quantity }}" style="padding: 6px 10px; font-size: 14px;">
+                                <button type="submit" class="btn btn-primary" style="padding:6px 16px; font-size: 14px;">Save</button>
+                                <button type="button" class="btn btn-tertiary" style="padding:6px 16px; font-size: 14px;" onclick="toggleEdit({{ item.id }})">Cancel</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">🥪</div>
+                    <h3>Your fridge is empty!</h3>
+                    <p>Start building your inventory by adding some ingredients.</p>
+                    <a href="/add" class="btn btn-primary">
+                        ➕ Add Your First Ingredient
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="action-buttons">
+            <a href="/add" class="btn btn-primary">
+                ➕ Add Ingredient
+            </a>
+            <a href="/recipes" class="btn btn-primary">
+                🍳 Find Recipes
+            </a>
+            <a href="/add_recipe" class="btn btn-primary">
+                📝 Add New Recipe
+            </a>
+            <a href="/all_recipes" class="btn btn-primary">
+                📘 View All Recipes
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to handle expiry date coloring
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const expiryElements = document.querySelectorAll('.ingredient-expiry');
+            
+            expiryElements.forEach(element => {
+                const text = element.textContent;
+                const dateMatch = text.match(/(\d{4}-\d{2}-\d{2})/);
+                
+                if (dateMatch) {
+                    const expiryDate = new Date(dateMatch[1]);
+                    const timeDiff = expiryDate.getTime() - today.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    // Remove default class and add appropriate one
+                    element.classList.remove('expiry-good');
+                    
+                    if (daysDiff < 0) {
+                        element.classList.add('expiry-expired');
+                        element.innerHTML = '⚠️ Expired: ' + dateMatch[1];
+                    } else if (daysDiff <= 3) {
+                        element.classList.add('expiry-soon');
+                        element.innerHTML = '⏰ Expires soon: ' + dateMatch[1];
+                    } else {
+                        element.classList.add('expiry-good');
+                    }
+                }
+            });
+
+            // Ingredient search filter
+            const searchInput = document.getElementById('ingredient-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const filter = this.value.toLowerCase();
+                    document.querySelectorAll('.ingredient-card').forEach(card => {
+                        const name = card.querySelector('.ingredient-name').textContent.toLowerCase();
+                        if (name.includes(filter)) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+
+        // Add some interactivity
+        document.querySelectorAll('.ingredient-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        function toggleEdit(id) {
+            const form = document.getElementById('edit-form-' + id);
+            const display = document.getElementById('quantity-display-' + id);
+            if (form.style.display === 'none') {
+                form.style.display = '';
+                if (display) display.style.display = 'none';
+            } else {
+                form.style.display = 'none';
+                if (display) display.style.display = '';
+            }
+        }
+    </script>
+</body>
+</html>

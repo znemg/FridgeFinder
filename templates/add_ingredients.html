@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add an Ingredient</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bebas Neue', sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fdf063;
+            color: #0c2f15;
+            line-height: 1.6;
+            font-size: 20px;
+        }
+
+        .container {
+            background: #fdf063;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 24px;
+            color: #0c2f15;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 800;
+            color: #0c2f15;
+            font-size: 1.2rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #0c2f15;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: #fff8c5;
+            color: #0c2f15;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #f05d23;
+            box-shadow: 0 0 0 3px rgba(240, 93, 35, 0.1);
+        }
+
+        input:invalid {
+            border-color: #d42219;
+        }
+
+        .hint {
+            font-size: 1rem;
+            color: #444;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .quantity-unit-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .quantity-unit-group .form-group {
+            margin-bottom: 0;
+        }
+
+        .quantity-unit-group .form-group:first-child {
+            flex: 2;
+        }
+
+        .quantity-unit-group .form-group:last-child {
+            flex: 1;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #f05d23;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #d34710;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 34, 25, 0.18);
+        }
+
+        .btn-secondary {
+            background-color: #0c2f15;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #333;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            color: #f05d23;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .back-link:hover {
+            color: #d34710;
+        }
+
+        .back-link::before {
+            content: "← ";
+            margin-right: 5px;
+        }
+
+        .required {
+            color: #d42219;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                margin: 20px 10px;
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .quantity-unit-group {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .quantity-unit-group .form-group {
+                margin-bottom: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Success message styling */
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add an Ingredient</h1>
+
+        <div id="successMessage" class="success-message">
+            Ingredient added successfully! ✓
+        </div>
+
+        <form id="ingredientForm" method="POST" action="/add" novalidate>
+            <div class="form-group">
+                <label for="name">Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required 
+                       placeholder="e.g., Tomatoes, Olive Oil, Chicken Breast">
+            </div>
+
+            <div class="quantity-unit-group">
+                <div class="form-group">
+                    <label for="quantity">Quantity <span class="required">*</span></label>
+                    <input type="number" id="quantity" name="quantity" step="0.01" min="0" required
+                           placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="unit">Unit <span class="required">*</span></label>
+                    <select id="unit" name="unit" required>
+                        <option value="">Select unit</option>
+                        <optgroup label="Weight">
+                            <option value="g">g (grams)</option>
+                            <option value="kg">kg (kilograms)</option>
+                            <option value="oz">oz (ounces)</option>
+                            <option value="lb">lb (pounds)</option>
+                        </optgroup>
+                        <optgroup label="Volume">
+                            <option value="ml">ml (milliliters)</option>
+                            <option value="l">l (liters)</option>
+                            <option value="tsp">tsp (teaspoon)</option>
+                            <option value="tbsp">tbsp (tablespoon)</option>
+                            <option value="cup">cup</option>
+                            <option value="fl oz">fl oz (fluid ounces)</option>
+                        </optgroup>
+                        <optgroup label="Count">
+                            <option value="pcs">pcs (pieces)</option>
+                            <option value="each">each</option>
+                            <option value="dozen">dozen</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                            <option value="custom">Custom unit...</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="customUnit" name="customUnit" 
+                       placeholder="Enter custom unit" style="display: none;">
+            </div>
+
+            <div class="form-group">
+                <label for="expiry_date">Expiry Date</label>
+                <input type="date" id="expiry_date" name="expiry_date">
+                <div class="hint">Optional. Leave blank if the ingredient doesn't have an expiry date.</div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Add Ingredient</button>
+                <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+            </div>
+        </form>
+
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+
+    <script>
+        const form = document.getElementById('ingredientForm');
+        const unitSelect = document.getElementById('unit');
+        const customUnitInput = document.getElementById('customUnit');
+        const successMessage = document.getElementById('successMessage');
+
+        // Handle custom unit selection
+        unitSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customUnitInput.style.display = 'block';
+                customUnitInput.required = true;
+                customUnitInput.focus();
+            } else {
+                customUnitInput.style.display = 'none';
+                customUnitInput.required = false;
+                customUnitInput.value = '';
+            }
+        });
+
+        // Form submission handling
+        form.addEventListener('submit', function(e) {
+            // If custom unit is selected, use the custom unit value
+            if (unitSelect.value === 'custom' && customUnitInput.value.trim()) {
+                // Create a hidden input with the custom unit value
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'unit';
+                hiddenInput.value = customUnitInput.value.trim();
+                form.appendChild(hiddenInput);
+            }
+        });
+
+        function showSuccessMessage() {
+            successMessage.style.display = 'block';
+            form.reset();
+            customUnitInput.style.display = 'none';
+            customUnitInput.required = false;
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function resetForm() {
+            form.reset();
+            customUnitInput.style.display = 'none';
+            customUnitInput.required = false;
+            successMessage.style.display = 'none';
+        }
+
+        // Set minimum date to today for expiry date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('expiry_date').setAttribute('min', today);
+    </script>
+</body>
+</html>
