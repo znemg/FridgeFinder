@@ -21,7 +21,6 @@ with app.app_context():
         RecipeIngredient(recipe_id=salad.id, name="arugula", quantity=30, unit="g"),
         RecipeIngredient(recipe_id=salad.id, name="olive oil", quantity=10, unit="ml"),
     ]
-
     db.session.add_all(items)
     db.session.commit()
     print("sample created")
