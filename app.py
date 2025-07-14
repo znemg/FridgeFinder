@@ -19,6 +19,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize the database with app
 db.init_app(app)
 
+# create the database in PostgreSQL if nothing has been created
+with app.app_context():
+    db.create_all()
+
 # Initialize the bcrypt password hashing func
 bcrypt = Bcrypt(app)
 
