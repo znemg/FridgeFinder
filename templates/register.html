@@ -69,20 +69,23 @@
             border-color: #f05d23;
             background-color: white;
         }
-        .btn {
-            display: inline-block;
+        .btn, .btn-secondary {
+            width: 100%;
+            box-sizing: border-box;
             padding: 14px 32px;
-            background-color: #f05d23;
-            color: white;
-            text-decoration: none;
             border-radius: 8px;
             font-size: 1.2rem;
             font-weight: 600;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
             margin-bottom: 16px;
+            display: block;
+        }
+        .btn {
+            background-color: #f05d23;
+            color: white;
+            text-decoration: none;
         }
         .btn:hover {
             background-color: #d34710;
@@ -93,6 +96,7 @@
             background-color: #fffde7;
             color: #0c2f15;
             border: 2px solid #f05d23;
+            text-decoration: none;
         }
         .btn-secondary:hover {
             background-color: #f05d23;
@@ -162,7 +166,9 @@
         <form method="POST" action="/register">
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
+                <div style="position:relative;display:flex;align-items:center;">
+                    <input type="text" id="username" name="username" required autocomplete="username" style="flex:1;padding-right:40px;box-sizing:border-box;">
+                </div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>

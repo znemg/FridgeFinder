@@ -74,6 +74,83 @@ def register():
         return redirect('/login')
     return render_template('register.html')
 
+# Unit conversion
+unit_conversion = {
+    # Weight to g
+    'g': 1, 
+    'kg': 1000, 
+    'oz': 28.3495, 
+    'lb': 453.592,
+    'mg': 0.001,
+    't': 1000000,  # metric ton
+    
+    # Volume to ml
+    'ml': 1, 
+    'l': 1000, 
+    'tsp': 4.92892, 
+    'tbsp': 14.7868, 
+    'cup': 240, 
+    'fl oz': 29.5735,
+    'pint': 473.176,
+    'quart': 946.353,
+    'gallon': 3785.41,
+    'cc': 1,  # cubic centimeter = ml
+    
+    # Count units
+    'pcs': 1, 
+    'each': 1, 
+    'dozen': 12,
+    'piece': 1,
+    'whole': 1,
+    'slice': 1,
+    'clove': 1,  # for garlic
+    'bunch': 1,
+    'head': 1,  # for lettuce, cabbage
+}
+
+def convert_unit(amount, from_unit, to_unit):
+    """
+    Convert amount from one unit to another.
+    Returns None if conversion is not possible.
+    """
+    if from_unit == to_unit:
+        return amount
+    
+    # Normalize units (handle common variations)
+    from_unit = from_unit.lower().strip()
+    to_unit = to_unit.lower().strip()
+    
+    # Handle common unit variations
+    unit_aliases = {
+        'gram': 'g', 'grams': 'g',
+        'kilogram': 'kg', 'kilograms': 'kg',
+        'ounce': 'oz', 'ounces': 'oz',
+        'pound': 'lb', 'pounds': 'lb',
+        'milliliter': 'ml', 'milliliters': 'ml',
+        'liter': 'l', 'liters': 'l',
+        'teaspoon': 'tsp', 'teaspoons': 'tsp',
+        'tablespoon': 'tbsp', 'tablespoons': 'tbsp',
+        'fluid ounce': 'fl oz', 'fluid ounces': 'fl oz',
+        'piece': 'pcs', 'pieces': 'pcs',
+        'whole': 'pcs',
+        'clove': 'pcs', 'cloves': 'pcs',
+        'bunch': 'pcs', 'bunches': 'pcs',
+        'head': 'pcs', 'heads': 'pcs',
+    }
+    
+    from_unit = unit_aliases.get(from_unit, from_unit)
+    to_unit = unit_aliases.get(to_unit, to_unit)
+    
+    # Ensure we have valid strings
+    if not from_unit or not to_unit:
+        return None
+    
+    try:
+        return amount * (unit_conversion[from_unit] / unit_conversion[to_unit])
+    except KeyError:
+        return None  # Unknown unit
+
+
 # Home route
 @app.route('/')
 @login_required
@@ -142,7 +219,7 @@ def add_ingredients():
 @app.route('/recipes')
 @login_required
 def recipe_recommendations():
-    recipes = Recipe.query.all()
+    recipes = Recipe.query.filter_by(user_id=current_user.id).all()
     fridge = Ingredient.query.filter_by(user_id=current_user.id).all()
     fridge_dict = {item.name.lower(): item for item in fridge}
 
@@ -296,80 +373,3 @@ def logout():
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-unit_conversion = {
-    # Weight to g
-    'g': 1, 
-    'kg': 1000, 
-    'oz': 28.3495, 
-    'lb': 453.592,
-    'mg': 0.001,
-    't': 1000000,  # metric ton
-    
-    # Volume to ml
-    'ml': 1, 
-    'l': 1000, 
-    'tsp': 4.92892, 
-    'tbsp': 14.7868, 
-    'cup': 240, 
-    'fl oz': 29.5735,
-    'pint': 473.176,
-    'quart': 946.353,
-    'gallon': 3785.41,
-    'cc': 1,  # cubic centimeter = ml
-    
-    # Count units
-    'pcs': 1, 
-    'each': 1, 
-    'dozen': 12,
-    'piece': 1,
-    'whole': 1,
-    'slice': 1,
-    'clove': 1,  # for garlic
-    'bunch': 1,
-    'head': 1,  # for lettuce, cabbage
-}
-
-def convert_unit(amount, from_unit, to_unit):
-    """
-    Convert amount from one unit to another.
-    Returns None if conversion is not possible.
-    """
-    if from_unit == to_unit:
-        return amount
-    
-    # Normalize units (handle common variations)
-    from_unit = from_unit.lower().strip()
-    to_unit = to_unit.lower().strip()
-    
-    # Handle common unit variations
-    unit_aliases = {
-        'gram': 'g', 'grams': 'g',
-        'kilogram': 'kg', 'kilograms': 'kg',
-        'ounce': 'oz', 'ounces': 'oz',
-        'pound': 'lb', 'pounds': 'lb',
-        'milliliter': 'ml', 'milliliters': 'ml',
-        'liter': 'l', 'liters': 'l',
-        'teaspoon': 'tsp', 'teaspoons': 'tsp',
-        'tablespoon': 'tbsp', 'tablespoons': 'tbsp',
-        'fluid ounce': 'fl oz', 'fluid ounces': 'fl oz',
-        'piece': 'pcs', 'pieces': 'pcs',
-        'whole': 'pcs',
-        'clove': 'pcs', 'cloves': 'pcs',
-        'bunch': 'pcs', 'bunches': 'pcs',
-        'head': 'pcs', 'heads': 'pcs',
-    }
-    
-    from_unit = unit_aliases.get(from_unit, from_unit)
-    to_unit = unit_aliases.get(to_unit, to_unit)
-    
-    # Ensure we have valid strings
-    if not from_unit or not to_unit:
-        return None
-    
-    try:
-        return amount * (unit_conversion[from_unit] / unit_conversion[to_unit])
-    except KeyError:
-        return None  # Unknown unit
